@@ -1,9 +1,23 @@
+import 'package:brainbox/models/note_model.dart';
+import 'package:brainbox/models/todo_model.dart';
 import 'package:brainbox/utils/router.dart';
 import 'package:brainbox/utils/theme_data.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive_flutter/adapters.dart';
 
-void main() {
+void main() async {
+  // Initialize Hive
+  await Hive.initFlutter();
+
+  //adapters registration
+  Hive.registerAdapter(NoteAdapter());
+  Hive.registerAdapter(ToDoAdapter());
+
+  // Open Hive box
+  await Hive.openBox('notes');
+  await Hive.openBox('todos');
+
   runApp(const MyApp());
 }
 
