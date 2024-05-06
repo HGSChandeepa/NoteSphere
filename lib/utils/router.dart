@@ -1,3 +1,4 @@
+import 'package:brainbox/pages/create_note.dart';
 import 'package:brainbox/pages/home_page.dart';
 import 'package:brainbox/pages/notes.dart';
 import 'package:brainbox/pages/todos.dart';
@@ -27,6 +28,14 @@ class AppRouter {
         path: '/todos',
         builder: (context, state) {
           return const ToDoPage();
+        },
+      ),
+
+      GoRoute(
+        name: "create-note",
+        path: "/create-note",
+        builder: (context, state) {
+          return const CreateNotePage();
         },
       ),
     ],

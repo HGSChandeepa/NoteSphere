@@ -45,15 +45,21 @@ class NoteService {
     if (notes != null && notes is List<dynamic>) {
       allNotes = notes.cast<Note>().toList();
     }
-
-    print("Notes loaded successfully");
   }
 
   // Method to add a note
   void addNote(Note note) async {
     allNotes.add(note);
     _myBox.put("notes", allNotes);
+  }
 
-    print("Note added successfully");
+  //methode to calculate the number of notes according to the category
+  int getNoOfNotes(String category) {
+    return allNotes.where((note) => note.category == category).length;
+  }
+
+  //method to get the notes according to the category
+  List<Note> getNotesByCategory(String category) {
+    return allNotes.where((note) => note.category == category).toList();
   }
 }

@@ -28,8 +28,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       title: 'Notes',
+      debugShowCheckedModeBanner: false,
       theme: ThemeClass.darkTheme.copyWith(
-        textTheme: GoogleFonts.latoTextTheme(
+        textTheme: GoogleFonts.outfitTextTheme(
           Theme.of(context).textTheme,
         ),
       ),
