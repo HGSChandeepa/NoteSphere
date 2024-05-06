@@ -8,14 +8,14 @@ class AppColors {
   static Color kWhiteColor = const Color.fromARGB(255, 255, 255, 255);
 
   //gradient colors
-  // static const int gradientStart = 0xFF00B686;
-  // static const int gradientEnd = 0xFF00838F;
-  // LinearGradient primaryGradient = const LinearGradient(
-  //   colors: <Color>[
-  //     Color(gradientStart),
-  //     Color(gradientEnd),
-  //   ],
-  //   begin: Alignment.centerLeft,
-  //   end: Alignment.centerRight,
-  // );
+  static const int gradientStart = 0XFF01F0FF;
+  static const int gradientEnd = 0XFF4441ED;
+  LinearGradient kPrimaryGradient = const LinearGradient(
+    colors: <Color>[
+      Color(gradientStart),
+      Color(gradientEnd),
+    ],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
 }

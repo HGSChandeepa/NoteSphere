@@ -1,4 +1,4 @@
-import 'package:brainbox/pages/home_page.dart';
+import 'package:brainbox/utils/router.dart';
 import 'package:brainbox/utils/theme_data.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,14 +12,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Notes',
       theme: ThemeClass.darkTheme.copyWith(
         textTheme: GoogleFonts.latoTextTheme(
           Theme.of(context).textTheme,
         ),
       ),
-      home: const HomePage(),
+      routerConfig: AppRouter.router,
     );
   }
 }
