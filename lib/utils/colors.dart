@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // //gradient colors
+  //primary colors
+  static const Color kFabColor = Color.fromARGB(255, 204, 17, 237);
+  static Color kBgColor = const Color(0xff202326);
+  static Color kCardColor = const Color(0xff2F3235);
+  static Color kWhiteColor = const Color.fromARGB(255, 255, 255, 255);
+
+  //gradient colors
   // static const int gradientStart = 0xFF00B686;
   // static const int gradientEnd = 0xFF00838F;
   // LinearGradient primaryGradient = const LinearGradient(
@@ -12,7 +18,4 @@ class AppColors {
   //   begin: Alignment.centerLeft,
   //   end: Alignment.centerRight,
   // );
-
-  //primary colors
-  static const Color kFabColor = Color.fromARGB(255, 204, 17, 237);
 }
