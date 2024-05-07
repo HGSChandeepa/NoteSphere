@@ -3,7 +3,6 @@ import 'package:brainbox/utils/text_styles.dart';
 import 'package:brainbox/widgets/notes_todo_card.dart';
 import 'package:brainbox/widgets/progress_card.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

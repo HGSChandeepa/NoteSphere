@@ -35,7 +35,11 @@ class AppRouter {
         name: "create-note",
         path: "/create-note",
         builder: (context, state) {
-          return const CreateNotePage();
+          final isNewCategory = state.extra as bool;
+
+          return CreateNotePage(
+            isNewCategory: isNewCategory,
+          );
         },
       ),
     ],

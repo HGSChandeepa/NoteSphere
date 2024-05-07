@@ -4,14 +4,13 @@ import 'package:brainbox/utils/text_styles.dart';
 import 'package:flutter/material.dart';
 
 class CategoryInputBottomSheet extends StatefulWidget {
-  final bool showCategoryInput;
-  final Function() onClose;
-  final Function() onToggle;
+  final Function() onNewNote;
+  final Function() onNewCategory;
 
   const CategoryInputBottomSheet({
-    required this.showCategoryInput,
-    required this.onClose,
-    required this.onToggle,
+    super.key,
+    required this.onNewNote,
+    required this.onNewCategory,
   });
 
   @override
@@ -20,24 +19,11 @@ class CategoryInputBottomSheet extends StatefulWidget {
 }
 
 class _CategoryInputBottomSheetState extends State<CategoryInputBottomSheet> {
-  late TextEditingController _categoryController;
-
-  @override
-  void initState() {
-    super.initState();
-    _categoryController = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    _categoryController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
+      height: MediaQuery.of(context).size.height * 0.5,
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(30),
@@ -50,44 +36,34 @@ class _CategoryInputBottomSheetState extends State<CategoryInputBottomSheet> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 30),
-          if (widget.showCategoryInput)
-            TextField(
-              controller: _categoryController,
-              decoration: InputDecoration(
-                hintText: 'Enter Category Name',
-              ),
-            )
-          else
-            GestureDetector(
-              onTap: widget.onClose,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Create a New Note',
-                    style: AppTextStyles.appDescription,
-                  ),
-                  Icon(
-                    Icons.arrow_right_outlined,
-                  )
-                ],
-              ),
-            ),
-          const SizedBox(height: 30),
-          if (!widget.showCategoryInput)
-            Divider(
-              color: AppColors.kWhiteColor.withOpacity(0.2),
-            ),
-          const SizedBox(height: 30),
           GestureDetector(
-            onTap: widget.onToggle,
-            child: Row(
+            onTap: widget.onNewNote,
+            child: const Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  widget.showCategoryInput
-                      ? 'Cancel Category Creation'
-                      : 'Create New Note Category',
+                  'Create a New Note',
+                  style: AppTextStyles.appDescription,
+                ),
+                Icon(
+                  Icons.arrow_right_outlined,
+                )
+              ],
+            ),
+          ),
+          const SizedBox(height: 30),
+          Divider(
+            color: AppColors.kWhiteColor.withOpacity(0.3),
+            thickness: 1,
+          ),
+          const SizedBox(height: 30),
+          GestureDetector(
+            onTap: widget.onNewCategory,
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Create New Note Category',
                   style: AppTextStyles.appDescription,
                 ),
                 Icon(

@@ -2,6 +2,7 @@ import 'package:brainbox/models/note_model.dart';
 import 'package:brainbox/services/note_service.dart';
 import 'package:brainbox/utils/colors.dart';
 import 'package:brainbox/utils/constants.dart';
+import 'package:brainbox/utils/router.dart';
 import 'package:brainbox/utils/text_styles.dart';
 import 'package:brainbox/widgets/bottom_sheet.dart';
 import 'package:brainbox/widgets/notes_card.dart';
@@ -22,41 +23,22 @@ class _NotesPageState extends State<NotesPage> {
   NoteService noteService = NoteService();
 
   void openBottomSheet() {
-    showCategoryInput
-        ? showModalBottomSheet(
-            context: context,
-            barrierColor: Colors.black.withOpacity(0.6),
-            builder: (context) => CategoryInputBottomSheet(
-              showCategoryInput: true,
-              onClose: () {
-                setState(() {
-                  showCategoryInput = false;
-                });
-              },
-              onToggle: () {
-                setState(() {
-                  showCategoryInput = !showCategoryInput;
-                });
-              },
-            ),
-          )
-        : showModalBottomSheet(
-            context: context,
-            barrierColor: Colors.black.withOpacity(0.6),
-            builder: (context) => CategoryInputBottomSheet(
-              showCategoryInput: false,
-              onClose: () {
-                setState(() {
-                  showCategoryInput = false;
-                });
-              },
-              onToggle: () {
-                setState(() {
-                  showCategoryInput = !showCategoryInput;
-                });
-              },
-            ),
-          );
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return CategoryInputBottomSheet(
+          onNewNote: () {
+            Navigator.pop(context);
+            AppRouter.router.push("/create-note", extra: false);
+          },
+          onNewCategory: () {
+            Navigator.pop(context);
+            AppRouter.router.push("/create-note", extra: true);
+          },
+        );
+      },
+    );
   }
 
   @override

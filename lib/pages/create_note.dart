@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
 class CreateNotePage extends StatefulWidget {
-  const CreateNotePage({super.key});
+  final bool isNewCategory;
+  const CreateNotePage({
+    super.key,
+    required this.isNewCategory,
+  });
 
   @override
   State<CreateNotePage> createState() => _CreateNotePageState();
@@ -14,8 +18,10 @@ class _CreateNotePageState extends State<CreateNotePage> {
       appBar: AppBar(
         title: const Text('Create Note'),
       ),
-      body: const Center(
-        child: Text('Create Note Page'),
+      body: Center(
+        child: widget.isNewCategory
+            ? Text('Create Category Page')
+            : Text('Create Note Page'),
       ),
     );
   }
