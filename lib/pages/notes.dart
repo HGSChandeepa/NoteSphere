@@ -48,8 +48,9 @@ class _NotesPageState extends State<NotesPage> {
 
   Future<void> _loadNotes() async {
     final List<Note> loadedNotes = await noteService.loadNotes();
+
     final Map<String, List<Note>> notesCategoryies =
-        await noteService.getNotesByCategoryMap(loadedNotes);
+        noteService.getNotesByCategoryMap(loadedNotes);
 
     setState(() {
       allNotes = loadedNotes;
@@ -60,14 +61,27 @@ class _NotesPageState extends State<NotesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            AppRouter.router.go(
+              "/",
+            );
+          },
+        ),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: openBottomSheet,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(100),
-          ),
-        ),
+        shape: RoundedRectangleBorder(
+            borderRadius: const BorderRadius.all(
+              Radius.circular(100),
+            ),
+            side: BorderSide(
+              color: AppColors.kWhiteColor,
+              width: 2,
+            )),
         backgroundColor: AppColors.kFabColor,
         child: Icon(
           Icons.add,
@@ -87,31 +101,47 @@ class _NotesPageState extends State<NotesPage> {
               style: AppTextStyles.appTitle,
             ),
             const SizedBox(height: 30),
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: AppConstants.kDefaultPadding,
-                mainAxisSpacing: AppConstants.kDefaultPadding,
-                childAspectRatio: 6 / 4,
-              ),
-              itemCount: notesWithCategory.length,
-              itemBuilder: (context, index) {
-                return InkWell(
-                  onTap: () {
-                    AppRouter.router.push(
-                      "/category",
-                      extra: notesWithCategory.keys.elementAt(index),
-                    );
-                  },
-                  child: NotesCard(
-                    noteCategory: notesWithCategory.keys.elementAt(index),
-                    noOfNotes: notesWithCategory.values.elementAt(index).length,
+            allNotes.isEmpty
+                ? SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.5,
+                    child: Center(
+                      child: Text(
+                        "No notes available , click on the + button to add a new note",
+                        style: TextStyle(
+                          color: AppColors.kWhiteColor.withOpacity(0.7),
+                          fontSize: 20,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  )
+                : GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: AppConstants.kDefaultPadding,
+                      mainAxisSpacing: AppConstants.kDefaultPadding,
+                      childAspectRatio: 6 / 4,
+                    ),
+                    itemCount: notesWithCategory.length,
+                    itemBuilder: (context, index) {
+                      return InkWell(
+                        onTap: () {
+                          AppRouter.router.push(
+                            "/category",
+                            extra: notesWithCategory.keys.elementAt(index),
+                          );
+                        },
+                        child: NotesCard(
+                          noteCategory: notesWithCategory.keys.elementAt(index),
+                          noOfNotes:
+                              notesWithCategory.values.elementAt(index).length,
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
           ],
         ),
       ),

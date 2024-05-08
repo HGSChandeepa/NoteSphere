@@ -3,6 +3,7 @@ import 'package:brainbox/pages/create_note.dart';
 import 'package:brainbox/pages/home_page.dart';
 import 'package:brainbox/pages/notes.dart';
 import 'package:brainbox/pages/notes_by_category.dart';
+import 'package:brainbox/pages/single_note.dart';
 import 'package:brainbox/pages/todos.dart';
 import 'package:brainbox/pages/update_note.dart';
 import 'package:flutter/material.dart';
@@ -68,6 +69,15 @@ class AppRouter {
           return UpdateNotePage(
             note: note,
           );
+        },
+      ),
+
+      GoRoute(
+        name: "single-note", // Corrected route name
+        path: "/single-note", // Corrected path with parameter
+        builder: (context, state) {
+          final Note note = state.extra as Note;
+          return SingleNotePage(note: note);
         },
       ),
     ],

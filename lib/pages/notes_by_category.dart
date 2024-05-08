@@ -37,10 +37,11 @@ class _NotesByCategoryPageState extends State<NotesByCategoryPage> {
     try {
       await NoteService().deleteNote(id);
       if (context.mounted) {
+        // ignore: use_build_context_synchronously
         AppHelpers.showSnackBar(context, "Note deleted successfully");
       }
     } catch (e) {
-      print(e);
+      // ignore: use_build_context_synchronously
       AppHelpers.showSnackBar(context, "Failed to delete note");
     }
   }
@@ -54,7 +55,18 @@ class _NotesByCategoryPageState extends State<NotesByCategoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        //remove the back button
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            AppRouter.router.push(
+              "/notes",
+            );
+          },
+        ),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(
@@ -94,6 +106,12 @@ class _NotesByCategoryPageState extends State<NotesByCategoryPage> {
                     },
                     editNote: () async {
                       _editNote(noteList[index]);
+                    },
+                    viewSingleNote: () {
+                      AppRouter.router.push(
+                        "/single-note",
+                        extra: noteList[index],
+                      );
                     },
                   );
                 },

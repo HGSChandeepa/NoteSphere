@@ -7,7 +7,6 @@ import 'package:brainbox/utils/router.dart';
 import 'package:brainbox/utils/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:uuid/uuid.dart';
 
 class UpdateNotePage extends StatefulWidget {
   final Note note;
@@ -51,7 +50,6 @@ class _UpdateNotePageState extends State<UpdateNotePage> {
     final noteService = NoteService();
     categories = await noteService.getAllCategories();
     setState(() {});
-    print(categories.length);
   }
 
   @override
@@ -78,7 +76,7 @@ class _UpdateNotePageState extends State<UpdateNotePage> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: DropdownButtonFormField<String>(
-                        value: category,
+                        // value: category,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please select a category';
@@ -130,6 +128,7 @@ class _UpdateNotePageState extends State<UpdateNotePage> {
                         },
                       ),
                     ),
+
                     const SizedBox(height: 10),
 
                     // Note Title

@@ -56,9 +56,8 @@ class NoteService {
       final dynamic allNotes = await _myBox.get("notes");
       allNotes.add(note);
       await _myBox.put("notes", allNotes);
-    } catch (e) {
-      print(e);
-    }
+      // ignore: empty_catches
+    } catch (e) {}
   }
 
   // Method to calculate the number of notes according to the category
@@ -69,6 +68,8 @@ class NoteService {
   // Method to get all the categories
   Future<List<String>> getAllCategories() async {
     final List<String> categories = [];
+    //get all notes from the box
+    final dynamic allNotes = await _myBox.get("notes");
     for (final note in allNotes) {
       if (!categories.contains(note.category)) {
         categories.add(note.category);
@@ -113,6 +114,7 @@ class NoteService {
       allNotes[index] = note;
       await _myBox.put("notes", allNotes);
     } catch (e) {
+      // ignore: avoid_print
       print(e);
     }
   }
@@ -125,6 +127,7 @@ class NoteService {
       allNotes.removeWhere((element) => element.id == noteId);
       await _myBox.put("notes", allNotes);
     } catch (e) {
+      // ignore: avoid_print
       print(e);
     }
   }

@@ -25,6 +25,7 @@ class _CreateNotePageState extends State<CreateNotePage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _noteTitileController = TextEditingController();
   final TextEditingController _noteContentController = TextEditingController();
+  final TextEditingController _categoryController = TextEditingController();
   String category = 'Work';
   List<String> categories = [];
 
@@ -32,6 +33,7 @@ class _CreateNotePageState extends State<CreateNotePage> {
   void dispose() {
     _noteTitileController.dispose();
     _noteContentController.dispose();
+    _categoryController.dispose();
     super.dispose();
   }
 
@@ -42,11 +44,11 @@ class _CreateNotePageState extends State<CreateNotePage> {
     super.initState();
   }
 
-  Future<void> _loadCategories() async {
+  Future _loadCategories() async {
     final noteService = NoteService();
     categories = await noteService.getAllCategories();
+
     setState(() {});
-    print(categories.length);
   }
 
   @override
@@ -68,63 +70,115 @@ class _CreateNotePageState extends State<CreateNotePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: DropdownButtonFormField<String>(
-                        value: category,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please select a category';
-                          }
-                          return null;
-                        },
-                        style: TextStyle(
-                          color: AppColors.kWhiteColor,
-                          fontFamily: GoogleFonts.outfit().fontFamily,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 20,
-                        ),
-                        isExpanded: false,
-                        hint: const Text(
-                          'Category',
-                        ),
-                        decoration: InputDecoration(
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(
-                                AppConstants.kDefaultPadding),
-                            borderSide: BorderSide(
-                              color: AppColors.kWhiteColor.withOpacity(0.1),
-                              width: 2,
+                    widget.isNewCategory
+                        ? Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: TextFormField(
+                              controller: _categoryController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter a category';
+                                }
+                                return null;
+                              },
+                              style: TextStyle(
+                                color: AppColors.kWhiteColor,
+                                fontFamily: GoogleFonts.outfit().fontFamily,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 20,
+                              ),
+                              decoration: InputDecoration(
+                                hintText: 'New Category',
+                                hintStyle: TextStyle(
+                                  color: AppColors.kWhiteColor.withOpacity(0.5),
+                                  fontFamily: GoogleFonts.outfit().fontFamily,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 20,
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      AppConstants.kDefaultPadding),
+                                  borderSide: BorderSide(
+                                    color:
+                                        AppColors.kWhiteColor.withOpacity(0.1),
+                                    width: 2,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      AppConstants.kDefaultPadding),
+                                  borderSide: BorderSide(
+                                    color: AppColors.kWhiteColor,
+                                    width: 1,
+                                  ),
+                                ),
+                              ),
+                              onFieldSubmitted: (value) {
+                                setState(() {
+                                  category = value;
+                                });
+                              },
+                            ),
+                          )
+                        : Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: DropdownButtonFormField<String>(
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please select a category';
+                                }
+                                return null;
+                              },
+                              style: TextStyle(
+                                color: AppColors.kWhiteColor,
+                                fontFamily: GoogleFonts.outfit().fontFamily,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 20,
+                              ),
+                              isExpanded: false,
+                              hint: const Text(
+                                'Category',
+                              ),
+                              decoration: InputDecoration(
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      AppConstants.kDefaultPadding),
+                                  borderSide: BorderSide(
+                                    color:
+                                        AppColors.kWhiteColor.withOpacity(0.1),
+                                    width: 2,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      AppConstants.kDefaultPadding),
+                                  borderSide: BorderSide(
+                                    color: AppColors.kWhiteColor,
+                                    width: 1,
+                                  ),
+                                ),
+                              ),
+                              items: categories.map((String category) {
+                                return DropdownMenuItem<String>(
+                                  alignment: Alignment.centerLeft,
+                                  value: category,
+                                  child: Text(
+                                    category,
+                                    style: AppTextStyles.appButton,
+                                  ),
+                                );
+                              }).toList(),
+                              onChanged: (String? value) {
+                                setState(() {
+                                  category = value!;
+                                });
+                              },
                             ),
                           ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(
-                                AppConstants.kDefaultPadding),
-                            borderSide: BorderSide(
-                              color: AppColors.kWhiteColor,
-                              width: 1,
-                            ),
-                          ),
-                        ),
-                        items: categories.map((String category) {
-                          return DropdownMenuItem<String>(
-                            alignment: Alignment.centerLeft,
-                            value: category,
-                            child: Text(
-                              category,
-                              style: AppTextStyles.appButton,
-                            ),
-                          );
-                        }).toList(),
-                        onChanged: (String? value) {
-                          setState(() {
-                            category = value!;
-                          });
-                        },
-                      ),
-                    ),
                     const SizedBox(height: 10),
 
                     // Note Title
@@ -205,7 +259,9 @@ class _CreateNotePageState extends State<CreateNotePage> {
                                   Note(
                                     id: const Uuid().v4(),
                                     title: _noteTitileController.text,
-                                    category: category,
+                                    category: widget.isNewCategory
+                                        ? _categoryController.text
+                                        : category,
                                     content: _noteContentController.text,
                                     date: DateTime.now(),
                                   ),

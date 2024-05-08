@@ -1,12 +1,14 @@
 import 'package:brainbox/utils/colors.dart';
 import 'package:brainbox/utils/text_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class NoteCategoryCard extends StatefulWidget {
   final String noteTitle;
   final String noteContent;
   final Future Function() removeNote;
   final Future Function() editNote;
+  final void Function() viewSingleNote;
 
   const NoteCategoryCard({
     super.key,
@@ -14,6 +16,7 @@ class NoteCategoryCard extends StatefulWidget {
     required this.noteContent,
     required this.removeNote,
     required this.editNote,
+    required this.viewSingleNote,
   });
 
   @override
@@ -54,21 +57,28 @@ class _NoteCategoryCardState extends State<NoteCategoryCard> {
                 ),
               ],
             ),
-            Text(
-              widget.noteTitle,
-              style: AppTextStyles.appSubtitle,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Text(
-              widget.noteContent,
-              style: AppTextStyles.appDescriptionSmall.copyWith(
-                color: AppColors.kWhiteColor.withOpacity(0.5),
+            GestureDetector(
+              onTap: widget.viewSingleNote,
+              child: Column(
+                children: [
+                  Text(
+                    widget.noteTitle,
+                    style: AppTextStyles.appSubtitle,
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    widget.noteContent,
+                    style: AppTextStyles.appDescriptionSmall.copyWith(
+                      color: AppColors.kWhiteColor.withOpacity(0.5),
+                    ),
+                    maxLines: 6,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.left,
+                  ),
+                ],
               ),
-              maxLines: 6,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.left,
             ),
           ],
         ),
