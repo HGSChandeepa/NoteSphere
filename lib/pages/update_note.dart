@@ -9,18 +9,18 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:uuid/uuid.dart';
 
-class CreateNotePage extends StatefulWidget {
-  final bool isNewCategory;
-  const CreateNotePage({
+class UpdateNotePage extends StatefulWidget {
+  final Note note;
+  const UpdateNotePage({
     super.key,
-    required this.isNewCategory,
+    required this.note,
   });
 
   @override
-  State<CreateNotePage> createState() => _CreateNotePageState();
+  State<UpdateNotePage> createState() => _UpdateNotePageState();
 }
 
-class _CreateNotePageState extends State<CreateNotePage> {
+class _UpdateNotePageState extends State<UpdateNotePage> {
   //form key
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _noteTitileController = TextEditingController();
@@ -37,8 +37,13 @@ class _CreateNotePageState extends State<CreateNotePage> {
 
   @override
   void initState() {
+    _noteTitileController.text = widget.note.title;
+    _noteContentController.text = widget.note.content;
+    category = widget.note.category;
+
     // Load all the categories
     _loadCategories();
+
     super.initState();
   }
 
@@ -201,19 +206,22 @@ class _CreateNotePageState extends State<CreateNotePage> {
                             if (_formKey.currentState!.validate()) {
                               try {
                                 final NoteService noteService = NoteService();
-                                noteService.addNote(
+                                //update the note
+                                noteService.updateNote(
+                                  //create a new note object
                                   Note(
-                                    id: const Uuid().v4(),
+                                    id: widget.note.id,
                                     title: _noteTitileController.text,
-                                    category: category,
                                     content: _noteContentController.text,
+                                    category: category,
                                     date: DateTime.now(),
                                   ),
                                 );
+
                                 //show a snackbar
                                 AppHelpers.showSnackBar(
                                   context,
-                                  'Note saved successfully',
+                                  'Note Updated successfully',
                                 );
 
                                 //clear the form
@@ -224,7 +232,7 @@ class _CreateNotePageState extends State<CreateNotePage> {
                                 //show a snackbar
                                 AppHelpers.showSnackBar(
                                   context,
-                                  'Failed to save note',
+                                  'Failed to update note',
                                 );
                               }
                             }
@@ -232,7 +240,7 @@ class _CreateNotePageState extends State<CreateNotePage> {
                           child: const Padding(
                             padding: EdgeInsets.all(10),
                             child: Text(
-                              'Save Note',
+                              'Update Note',
                               style: AppTextStyles.appButton,
                             ),
                           ),

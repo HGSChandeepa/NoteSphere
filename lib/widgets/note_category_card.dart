@@ -2,16 +2,25 @@ import 'package:brainbox/utils/colors.dart';
 import 'package:brainbox/utils/text_styles.dart';
 import 'package:flutter/material.dart';
 
-class NoteCategoryCard extends StatelessWidget {
+class NoteCategoryCard extends StatefulWidget {
   final String noteTitle;
   final String noteContent;
+  final Future Function() removeNote;
+  final Future Function() editNote;
 
   const NoteCategoryCard({
     super.key,
     required this.noteTitle,
     required this.noteContent,
+    required this.removeNote,
+    required this.editNote,
   });
 
+  @override
+  State<NoteCategoryCard> createState() => _NoteCategoryCardState();
+}
+
+class _NoteCategoryCardState extends State<NoteCategoryCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -21,15 +30,39 @@ class NoteCategoryCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                IconButton(
+                  onPressed: widget.editNote,
+                  icon: Icon(
+                    Icons.edit_outlined,
+                    color: AppColors.kWhiteColor.withOpacity(0.5),
+                    size: 25,
+                  ),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                IconButton(
+                  onPressed: widget.removeNote,
+                  icon: Icon(
+                    Icons.delete_outline,
+                    color: AppColors.kWhiteColor.withOpacity(0.5),
+                    size: 25,
+                  ),
+                ),
+              ],
+            ),
             Text(
-              noteTitle,
+              widget.noteTitle,
               style: AppTextStyles.appSubtitle,
             ),
             const SizedBox(
               height: 10,
             ),
             Text(
-              noteContent,
+              widget.noteContent,
               style: AppTextStyles.appDescriptionSmall.copyWith(
                 color: AppColors.kWhiteColor.withOpacity(0.5),
               ),
