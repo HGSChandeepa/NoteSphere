@@ -7,7 +7,6 @@ import 'package:brainbox/utils/text_styles.dart';
 import 'package:brainbox/widgets/bottom_sheet.dart';
 import 'package:brainbox/widgets/notes_card.dart';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 
 class NotesPage extends StatefulWidget {
   const NotesPage({super.key});
@@ -17,13 +16,13 @@ class NotesPage extends StatefulWidget {
 }
 
 class _NotesPageState extends State<NotesPage> {
-  final List<Note> allNotes = [];
-  bool showCategoryInput = false;
-  final _noteBox = Hive.box("notes");
-  NoteService noteService = NoteService();
+  List<Note> allNotes = [];
+  Map<String, List<Note>> notesWithCategory = {};
+  final NoteService noteService = NoteService();
 
   void openBottomSheet() {
     showModalBottomSheet(
+      barrierColor: Colors.black.withOpacity(0.7),
       context: context,
       isScrollControlled: true,
       builder: (context) {
@@ -44,17 +43,18 @@ class _NotesPageState extends State<NotesPage> {
   @override
   void initState() {
     super.initState();
-    if (_noteBox.get("notes") == null) {
-      noteService.createInitialNotes();
-      setState(() {
-        allNotes.addAll(noteService.allNotes);
-      });
-    } else {
-      noteService.loadNotes();
-      setState(() {
-        allNotes.addAll(noteService.allNotes);
-      });
-    }
+    _loadNotes();
+  }
+
+  Future<void> _loadNotes() async {
+    final List<Note> loadedNotes = await noteService.loadNotes();
+    final Map<String, List<Note>> notesCategoryies =
+        await noteService.getNotesByCategoryMap(loadedNotes);
+
+    setState(() {
+      allNotes = loadedNotes;
+      notesWithCategory = notesCategoryies;
+    });
   }
 
   @override
@@ -96,11 +96,19 @@ class _NotesPageState extends State<NotesPage> {
                 mainAxisSpacing: AppConstants.kDefaultPadding,
                 childAspectRatio: 6 / 4,
               ),
-              itemCount: allNotes.length,
+              itemCount: notesWithCategory.length,
               itemBuilder: (context, index) {
-                return NotesCard(
-                  noteCategory: allNotes[index].category,
-                  noOfNotes: noteService.getNoOfNotes(allNotes[index].category),
+                return InkWell(
+                  onTap: () {
+                    AppRouter.router.push(
+                      "/category",
+                      extra: notesWithCategory.keys.elementAt(index),
+                    );
+                  },
+                  child: NotesCard(
+                    noteCategory: notesWithCategory.keys.elementAt(index),
+                    noOfNotes: notesWithCategory.values.elementAt(index).length,
+                  ),
                 );
               },
             ),

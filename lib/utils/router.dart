@@ -1,11 +1,15 @@
 import 'package:brainbox/pages/create_note.dart';
 import 'package:brainbox/pages/home_page.dart';
 import 'package:brainbox/pages/notes.dart';
+import 'package:brainbox/pages/notes_by_category.dart';
 import 'package:brainbox/pages/todos.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class AppRouter {
   static final router = GoRouter(
+    navigatorKey: GlobalKey<NavigatorState>(),
+    // debugLogDiagnostics: true,
     initialLocation: '/',
     routes: [
       //Home Page route
@@ -39,6 +43,17 @@ class AppRouter {
 
           return CreateNotePage(
             isNewCategory: isNewCategory,
+          );
+        },
+      ),
+
+      GoRoute(
+        name: "note-category", // Corrected route name
+        path: "/category", // Corrected path with parameter
+        builder: (context, state) {
+          final String category = state.extra as String;
+          return NotesByCategoryPage(
+            category: category,
           );
         },
       ),
