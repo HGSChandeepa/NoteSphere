@@ -55,7 +55,22 @@ class NoteService {
 
   //methode to calculate the number of notes according to the category
   int getNoOfNotes(String category) {
+    
     return allNotes.where((note) => note.category == category).length;
+  }
+
+  //methode to get all the categories
+  List<String> getAllCategories() {
+    //load all the notes first
+    createInitialNotes();
+    final List<String> categories = [];
+    for (final note in allNotes) {
+      if (!categories.contains(note.category)) {
+        categories.add(note.category);
+      }
+    }
+
+    return categories;
   }
 
   //method to get the notes according to the category
