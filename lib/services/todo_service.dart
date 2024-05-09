@@ -8,7 +8,7 @@ class ToDoService {
       title: "Read a Book",
       date: DateTime.now(),
       time: DateTime.now(),
-      isDone: false,
+      isDone: true,
     ),
     ToDo(
       title: "Go for a Walk",
@@ -68,8 +68,8 @@ class ToDoService {
     try {
       //get all todos from the box
       final dynamic allTodos = await _myBox.get("todos");
-      final int index = allTodos.indexWhere((element) => element == todo);
-      allTodos[index].isDone = true;
+      final int index = allTodos.indexWhere((element) => element.id == todo.id);
+      allTodos[index] = todo;
       await _myBox.put("todos", allTodos);
       // ignore: empty_catches
     } catch (e) {

@@ -1,6 +1,7 @@
 import 'package:brainbox/models/todo_model.dart';
 import 'package:brainbox/services/todo_service.dart';
 import 'package:brainbox/utils/colors.dart';
+import 'package:brainbox/utils/router.dart';
 import 'package:brainbox/utils/text_styles.dart';
 import 'package:brainbox/widgets/completed_todo_tab.dart';
 import 'package:brainbox/widgets/todo_tab.dart';
@@ -16,6 +17,8 @@ class ToDoPage extends StatefulWidget {
 class _ToDoPageState extends State<ToDoPage>
     with SingleTickerProviderStateMixin {
   List<ToDo> allToDos = [];
+  List<ToDo> inCompleteToDos = [];
+  List<ToDo> completeToDos = [];
   late TabController _tabController;
 
   @override
@@ -42,6 +45,8 @@ class _ToDoPageState extends State<ToDoPage>
 
     setState(() {
       allToDos = loadedToDos;
+      inCompleteToDos = allToDos.where((todo) => !todo.isDone).toList();
+      completeToDos = allToDos.where((todo) => todo.isDone).toList();
     });
   }
 
@@ -118,6 +123,15 @@ class _ToDoPageState extends State<ToDoPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            AppRouter.router.go(
+              "/",
+            );
+          },
+        ),
         bottom: TabBar(
           controller: _tabController,
           tabs: const [
@@ -155,9 +169,13 @@ class _ToDoPageState extends State<ToDoPage>
       ),
       body: TabBarView(
         controller: _tabController,
-        children: const [
-          ToDoTab(),
-          CompletedTab(),
+        children: [
+          ToDoTab(
+            inCompleteToDos: inCompleteToDos,
+          ),
+          CompletedTab(
+            completeToDos: completeToDos,
+          ),
         ],
       ),
     );
