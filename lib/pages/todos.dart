@@ -1,3 +1,4 @@
+import 'package:brainbox/helpers/show_snackbar.dart';
 import 'package:brainbox/models/todo_model.dart';
 import 'package:brainbox/services/todo_service.dart';
 import 'package:brainbox/utils/colors.dart';
@@ -8,7 +9,7 @@ import 'package:brainbox/widgets/todo_tab.dart';
 import 'package:flutter/material.dart';
 
 class ToDoPage extends StatefulWidget {
-  const ToDoPage({Key? key}) : super(key: key);
+  const ToDoPage({super.key});
 
   @override
   State<ToDoPage> createState() => _ToDoPageState();
@@ -20,6 +21,14 @@ class _ToDoPageState extends State<ToDoPage>
   List<ToDo> inCompleteToDos = [];
   List<ToDo> completeToDos = [];
   late TabController _tabController;
+  final TextEditingController _todoController = TextEditingController();
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _todoController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -50,6 +59,28 @@ class _ToDoPageState extends State<ToDoPage>
     });
   }
 
+  //add todo
+  void _addTodo() async {
+    if (_todoController.text.isNotEmpty) {
+      final ToDo newToDo = ToDo(
+        title: _todoController.text,
+        date: DateTime.now(),
+        time: DateTime.now(),
+        isDone: false,
+      );
+
+      try {
+        await ToDoService().addTodo(newToDo);
+        _loadToDos();
+        AppHelpers.showSnackBar(context, "Task Added");
+        Navigator.pop(context);
+      } catch (e) {
+        AppHelpers.showSnackBar(context, "Failed to add task");
+        print(e);
+      }
+    }
+  }
+
   // Add the openBottomSheet method here
   void openBottomSheet() {
     showModalBottomSheet(
@@ -58,7 +89,7 @@ class _ToDoPageState extends State<ToDoPage>
       builder: (context) {
         return Container(
           width: double.infinity,
-          height: MediaQuery.of(context).size.height * 0.4,
+          height: MediaQuery.of(context).size.height * 0.7,
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(30),
@@ -66,52 +97,59 @@ class _ToDoPageState extends State<ToDoPage>
             ),
             color: AppColors.kCardColor,
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const SizedBox(height: 20),
-                Text("Add Task",
-                    style: AppTextStyles.appDescription.copyWith(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(height: 20),
+                  Text("Add Task",
+                      style: AppTextStyles.appDescription.copyWith(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      )),
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: _todoController,
+                    style: TextStyle(
+                      color: AppColors.kWhiteColor,
                       fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    )),
-                const SizedBox(height: 20),
-                TextField(
-                  decoration: InputDecoration(
-                    hintText: "Enter your task",
-                    hintStyle: AppTextStyles.appDescriptionSmall,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    decoration: InputDecoration(
+                      hintText: "Enter your task",
+                      hintStyle: AppTextStyles.appDescriptionSmall,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {},
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(
-                          AppColors.kFabColor,
-                        ),
-                        shape: MaterialStateProperty.all(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(100),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      ElevatedButton(
+                        onPressed: _addTodo,
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(
+                            AppColors.kFabColor,
+                          ),
+                          shape: MaterialStateProperty.all(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(100),
+                            ),
                           ),
                         ),
+                        child: const Text(
+                          "Add Task",
+                          style: AppTextStyles.appButton,
+                        ),
                       ),
-                      child: const Text(
-                        "Add Task",
-                        style: AppTextStyles.appButton,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         );

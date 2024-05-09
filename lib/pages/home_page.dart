@@ -1,7 +1,13 @@
+import 'package:brainbox/models/note_model.dart';
+import 'package:brainbox/models/todo_model.dart';
+import 'package:brainbox/services/note_service.dart';
+import 'package:brainbox/services/todo_service.dart';
 import 'package:brainbox/utils/router.dart';
 import 'package:brainbox/utils/text_styles.dart';
+import 'package:brainbox/widgets/main_screen_todo_card.dart';
 import 'package:brainbox/widgets/notes_todo_card.dart';
 import 'package:brainbox/widgets/progress_card.dart';
+import 'package:brainbox/widgets/todo_card.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -12,6 +18,47 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  List<Note> allNotes = [];
+  List<ToDo> allToDos = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _checkIfUserIsNew();
+  }
+
+  void _checkIfUserIsNew() async {
+    // Check if the notes box is empty
+    final bool isNewUser =
+        await NoteService().isNewUser() || await ToDoService().isNewUser();
+    if (isNewUser) {
+      // If the user is new, create the initial notes
+      await NoteService().createInitialNotes();
+      await ToDoService().createInitialTodos();
+    }
+    // Load the notes
+    _loadNotes();
+    _loadToDos();
+  }
+
+  Future<void> _loadNotes() async {
+    final List<Note> loadedNotes = await NoteService().loadNotes();
+
+    setState(() {
+      allNotes = loadedNotes;
+      print(allNotes.length);
+    });
+  }
+
+  Future<void> _loadToDos() async {
+    final List<ToDo> loadedToDos = await ToDoService().loadTodos();
+
+    setState(() {
+      allToDos = loadedToDos;
+      print(allToDos.length);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,9 +74,9 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 20),
-            const ProgressCard(
-              completedTasks: 2,
-              totalTasks: 5,
+            ProgressCard(
+              completedTasks: allToDos.where((todo) => todo.isDone).length,
+              totalTasks: allToDos.length,
             ),
             const SizedBox(height: 30),
             Row(
@@ -40,9 +87,9 @@ class _HomePageState extends State<HomePage> {
                   onTap: () {
                     AppRouter.router.push("/notes");
                   },
-                  child: const NotesTodoCard(
+                  child: NotesTodoCard(
                     title: 'Notes',
-                    description: '40 pages',
+                    description: "${allNotes.length.toString()} Notes",
                     icon: Icons.bookmark_add_outlined,
                   ),
                 ),
@@ -51,9 +98,9 @@ class _HomePageState extends State<HomePage> {
                   onTap: () {
                     AppRouter.router.push("/todos");
                   },
-                  child: const NotesTodoCard(
+                  child: NotesTodoCard(
                     title: 'To-Do List',
-                    description: '5 tasks',
+                    description: "${allToDos.length.toString()} Tasks",
                     icon: Icons.today_outlined,
                   ),
                 ),
@@ -72,6 +119,25 @@ class _HomePageState extends State<HomePage> {
                   style: AppTextStyles.appButton,
                 ),
               ],
+            ),
+            // Add the progress card here
+            const SizedBox(height: 20),
+            //display all  todos
+            Expanded(
+              child: ListView.builder(
+                itemCount: allToDos.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: MainScreenToDoCard(
+                      toDoTitle: allToDos[index].title,
+                      date: allToDos[index].date.toString(),
+                      time: allToDos[index].time.toString(),
+                      isDone: allToDos[index].isDone,
+                    ),
+                  );
+                },
+              ),
             ),
           ],
         ),

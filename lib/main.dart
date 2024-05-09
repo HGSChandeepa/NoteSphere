@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
       title: 'Notes',
       debugShowCheckedModeBanner: false,
       theme: ThemeClass.darkTheme.copyWith(
-        textTheme: GoogleFonts.outfitTextTheme(
+        textTheme: GoogleFonts.dmSansTextTheme(
           Theme.of(context).textTheme,
         ),
       ),
