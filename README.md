@@ -11,7 +11,7 @@ NoteSphere
 
 ## Installation
 
-1. Clone this repository: `git clone <repository-url>`
+1. Clone this repository: `git clone https://github.com/HGSChandeepa/NoteSphere`
 2. Navigate to the project directory: `cd NoteSphere`
 3. Install dependencies: `flutter pub get`
 4. Run the app: `flutter run`
