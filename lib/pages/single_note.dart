@@ -3,6 +3,7 @@ import 'package:brainbox/utils/colors.dart';
 import 'package:brainbox/utils/constants.dart';
 import 'package:brainbox/utils/text_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class SingleNotePage extends StatelessWidget {
   final Note note;
@@ -13,6 +14,9 @@ class SingleNotePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Format the date
+    final formattedDate = DateFormat.yMMMd().format(note.date);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Note"),
@@ -26,6 +30,13 @@ class SingleNotePage extends StatelessWidget {
             Text(
               note.title,
               style: AppTextStyles.appTitle,
+            ),
+            const SizedBox(height: 5),
+            Text(
+              formattedDate,
+              style: AppTextStyles.appDescriptionSmall.copyWith(
+                color: AppColors.kFabColor,
+              ),
             ),
             const SizedBox(height: 20),
             Text(

@@ -33,6 +33,12 @@ class NoteService {
   // Create the database reference for notes
   final _myBox = Hive.box("notes");
 
+
+  //check weather the user is new user
+  Future<bool> isNewUser() async {
+    return _myBox.isEmpty;
+  }
+
   // Method to create the initial notes if the box is empty
   Future<void> createInitialNotes() async {
     if (_myBox.isEmpty) {

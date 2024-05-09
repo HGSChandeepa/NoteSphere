@@ -64,6 +64,8 @@ class _NoteCategoryCardState extends State<NoteCategoryCard> {
                   Text(
                     widget.noteTitle,
                     style: AppTextStyles.appSubtitle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(
                     height: 10,

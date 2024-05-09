@@ -43,6 +43,17 @@ class _NotesPageState extends State<NotesPage> {
   @override
   void initState() {
     super.initState();
+    _checkIfUserIsNew();
+  }
+
+  void _checkIfUserIsNew() async {
+    // Check if the notes box is empty
+    final bool isNewUser = await noteService.isNewUser();
+    if (isNewUser) {
+      // If the user is new, create the initial notes
+      await noteService.createInitialNotes();
+    }
+    // Load the notes
     _loadNotes();
   }
 
