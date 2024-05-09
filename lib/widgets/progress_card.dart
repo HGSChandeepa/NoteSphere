@@ -21,8 +21,9 @@ class ProgressCard extends StatefulWidget {
 class _ProgressCardState extends State<ProgressCard> {
   @override
   Widget build(BuildContext context) {
-    final double progressPercentage =
-        (widget.completedTasks / widget.totalTasks) * 100;
+    double completionPercentage = widget.totalTasks != 0
+        ? (widget.completedTasks / widget.totalTasks) * 100
+        : 0; // Handle division by zero
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -66,7 +67,7 @@ class _ProgressCardState extends State<ProgressCard> {
               Positioned.fill(
                 child: Center(
                   child: Text(
-                    "${progressPercentage.toStringAsFixed(0)}%",
+                    "${completionPercentage.toStringAsFixed(0)}%",
                     style: AppTextStyles.appTitle,
                   ),
                 ),

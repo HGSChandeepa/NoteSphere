@@ -131,22 +131,52 @@ class _HomePageState extends State<HomePage> {
               // Add the progress card here
               const SizedBox(height: 20),
               //display all  todos
-              Expanded(
-                child: ListView.builder(
-                  itemCount: allToDos.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: MainScreenToDoCard(
-                        toDoTitle: allToDos[index].title,
-                        date: allToDos[index].date.toString(),
-                        time: allToDos[index].time.toString(),
-                        isDone: allToDos[index].isDone,
+              allToDos.length == 0
+                  ? Container(
+                      margin: EdgeInsets.only(
+                          top: MediaQuery.of(context).size.height * 0.1),
+                      child: Center(
+                        child: Column(
+                          children: [
+                            Text(
+                              "No tasks for today , Add some tasks to get started!",
+                              style: AppTextStyles.appDescription.copyWith(
+                                color: Colors.grey,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 20),
+                            ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                  Colors.blue,
+                                ),
+                              ),
+                              onPressed: () {
+                                AppRouter.router.push("/todos");
+                              },
+                              child: const Text("Add Task"),
+                            ),
+                          ],
+                        ),
                       ),
-                    );
-                  },
-                ),
-              ),
+                    )
+                  : Expanded(
+                      child: ListView.builder(
+                        itemCount: allToDos.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: MainScreenToDoCard(
+                              toDoTitle: allToDos[index].title,
+                              date: allToDos[index].date.toString(),
+                              time: allToDos[index].time.toString(),
+                              isDone: allToDos[index].isDone,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
             ],
           ),
         ),
