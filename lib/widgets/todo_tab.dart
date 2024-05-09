@@ -1,5 +1,6 @@
 import 'package:brainbox/helpers/show_snackbar.dart';
 import 'package:brainbox/models/todo_model.dart';
+import 'package:brainbox/pages/todo_data_inharited.dart';
 import 'package:brainbox/services/todo_service.dart';
 import 'package:brainbox/utils/constants.dart';
 import 'package:brainbox/utils/router.dart';
@@ -44,36 +45,43 @@ class _ToDoTabState extends State<ToDoTab> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: Column(
-        children: [
-          const SizedBox(height: 20),
-          Expanded(
-            child: ListView.builder(
-              itemCount: widget.inCompleteToDos.length,
-              itemBuilder: (context, index) {
-                final ToDo toDo = widget.inCompleteToDos[index];
-                return Dismissible(
-                  key: Key(toDo.id.toString()),
-                  onDismissed: (direction) {
-                    setState(() {
-                      widget.inCompleteToDos.removeAt(index);
-                      ToDoService().deleteTodo(toDo);
-                    });
+    setState(() {
+      widget.inCompleteToDos.sort((a, b) => a.date.compareTo(b.date));
+    });
+    return ToDoData(
+      todos: widget.inCompleteToDos,
+      onTodosChanged: () {},
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: Column(
+          children: [
+            const SizedBox(height: 20),
+            Expanded(
+              child: ListView.builder(
+                itemCount: widget.inCompleteToDos.length,
+                itemBuilder: (context, index) {
+                  final ToDo toDo = widget.inCompleteToDos[index];
+                  return Dismissible(
+                    key: Key(toDo.id.toString()),
+                    onDismissed: (direction) {
+                      setState(() {
+                        widget.inCompleteToDos.removeAt(index);
+                        ToDoService().deleteTodo(toDo);
+                      });
 
-                    AppHelpers.showSnackBar(context, "Deleted");
-                  },
-                  child: TodoCard(
-                    toDo: toDo,
-                    isComplete: false,
-                    onCheckBoxChanged: () => _markAsDone(toDo),
-                  ),
-                );
-              },
+                      AppHelpers.showSnackBar(context, "Deleted");
+                    },
+                    child: TodoCard(
+                      toDo: toDo,
+                      isComplete: false,
+                      onCheckBoxChanged: () => _markAsDone(toDo),
+                    ),
+                  );
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

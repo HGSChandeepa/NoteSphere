@@ -1,5 +1,6 @@
 import 'package:brainbox/helpers/show_snackbar.dart';
 import 'package:brainbox/models/todo_model.dart';
+import 'package:brainbox/pages/todo_data_inharited.dart';
 import 'package:brainbox/services/todo_service.dart';
 import 'package:brainbox/utils/colors.dart';
 import 'package:brainbox/utils/router.dart';
@@ -9,7 +10,7 @@ import 'package:brainbox/widgets/todo_tab.dart';
 import 'package:flutter/material.dart';
 
 class ToDoPage extends StatefulWidget {
-  const ToDoPage({super.key});
+  const ToDoPage({Key? key}) : super(key: key);
 
   @override
   State<ToDoPage> createState() => _ToDoPageState();
@@ -17,9 +18,9 @@ class ToDoPage extends StatefulWidget {
 
 class _ToDoPageState extends State<ToDoPage>
     with SingleTickerProviderStateMixin {
-  List<ToDo> allToDos = [];
-  List<ToDo> inCompleteToDos = [];
-  List<ToDo> completeToDos = [];
+  late List<ToDo> allToDos = [];
+  late List<ToDo> inCompleteToDos = [];
+  late List<ToDo> completeToDos = [];
   late TabController _tabController;
   final TextEditingController _todoController = TextEditingController();
 
@@ -38,14 +39,11 @@ class _ToDoPageState extends State<ToDoPage>
   }
 
   void _checkIfUserIsNew() async {
-    // Check if the notes box is empty
     final bool isNewUser = await ToDoService().isNewUser();
 
     if (isNewUser) {
-      // If the user is new, create the initial notes
       await ToDoService().createInitialTodos();
     }
-    // Load the notes
     _loadToDos();
   }
 
@@ -59,7 +57,6 @@ class _ToDoPageState extends State<ToDoPage>
     });
   }
 
-  //add todo
   void _addTodo() async {
     if (_todoController.text.isNotEmpty) {
       final ToDo newToDo = ToDo(
@@ -72,6 +69,10 @@ class _ToDoPageState extends State<ToDoPage>
       try {
         await ToDoService().addTodo(newToDo);
         _loadToDos();
+        final todosData = ToDoData.of(context);
+        if (todosData != null) {
+          todosData.onTodosChanged();
+        }
         AppHelpers.showSnackBar(context, "Task Added");
         Navigator.pop(context);
       } catch (e) {
@@ -81,77 +82,73 @@ class _ToDoPageState extends State<ToDoPage>
     }
   }
 
-  // Add the openBottomSheet method here
-  void openBottomSheet() {
-    showModalBottomSheet(
-      barrierColor: Colors.black.withOpacity(0.7),
+  void openMessageModal(BuildContext context) {
+    showDialog(
       context: context,
-      builder: (context) {
-        return Container(
-          width: double.infinity,
-          height: MediaQuery.of(context).size.height * 0.7,
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(30),
-              topRight: Radius.circular(30),
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: AppColors.kCardColor,
+          title: Text(
+            "Add Task",
+            style: AppTextStyles.appDescription.copyWith(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: AppColors.kWhiteColor,
             ),
-            color: AppColors.kCardColor,
           ),
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const SizedBox(height: 20),
-                  Text("Add Task",
-                      style: AppTextStyles.appDescription.copyWith(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      )),
-                  const SizedBox(height: 20),
-                  TextField(
-                    controller: _todoController,
-                    style: TextStyle(
-                      color: AppColors.kWhiteColor,
-                      fontSize: 20,
-                    ),
-                    decoration: InputDecoration(
-                      hintText: "Enter your task",
-                      hintStyle: AppTextStyles.appDescriptionSmall,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                TextField(
+                  controller: _todoController,
+                  style: TextStyle(
+                    color: AppColors.kWhiteColor,
+                    fontSize: 20,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: "Enter your task",
+                    hintStyle: AppTextStyles.appDescriptionSmall,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      ElevatedButton(
-                        onPressed: _addTodo,
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(
-                            AppColors.kFabColor,
-                          ),
-                          shape: MaterialStateProperty.all(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(100),
-                            ),
-                          ),
-                        ),
-                        child: const Text(
-                          "Add Task",
-                          style: AppTextStyles.appButton,
-                        ),
-                      ),
-                    ],
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                _addTodo();
+                AppRouter.router.go("/todos");
+              },
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(
+                  AppColors.kFabColor,
+                ),
+                shape: MaterialStateProperty.all(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(100),
                   ),
-                ],
+                ),
+              ),
+              child: const Text(
+                "Add Task",
+                style: AppTextStyles.appButton,
               ),
             ),
-          ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                'Cancel',
+                style: TextStyle(
+                  color: AppColors.kWhiteColor,
+                ),
+              ),
+            ),
+          ],
         );
       },
     );
@@ -159,62 +156,69 @@ class _ToDoPageState extends State<ToDoPage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            AppRouter.router.go(
-              "/",
-            );
-          },
+    final todosData = ToDoData.of(context);
+    final todos = todosData?.todos ?? [];
+
+    return ToDoData(
+      todos: allToDos,
+      onTodosChanged: _loadToDos,
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              AppRouter.router.go("/");
+            },
+          ),
+          bottom: TabBar(
+            controller: _tabController,
+            tabs: const [
+              Tab(
+                child: Text(
+                  "ToDo",
+                  style: AppTextStyles.appDescription,
+                ),
+              ),
+              Tab(
+                child: Text(
+                  "Completed",
+                  style: AppTextStyles.appDescription,
+                ),
+              ),
+            ],
+          ),
         ),
-        bottom: TabBar(
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            openMessageModal(context);
+          },
+          shape: RoundedRectangleBorder(
+              borderRadius: const BorderRadius.all(
+                Radius.circular(100),
+              ),
+              side: BorderSide(
+                color: AppColors.kWhiteColor,
+                width: 2,
+              )),
+          backgroundColor: AppColors.kFabColor,
+          child: Icon(
+            Icons.add,
+            color: AppColors.kWhiteColor,
+            size: 30,
+          ),
+        ),
+        body: TabBarView(
           controller: _tabController,
-          tabs: const [
-            Tab(
-              child: Text(
-                "ToDo",
-                style: AppTextStyles.appDescription,
-              ),
+          children: [
+            ToDoTab(
+              inCompleteToDos: inCompleteToDos,
             ),
-            Tab(
-              child: Text(
-                "Completed",
-                style: AppTextStyles.appDescription,
-              ),
+            CompletedTab(
+              completeToDos: completeToDos,
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: openBottomSheet,
-        shape: RoundedRectangleBorder(
-            borderRadius: const BorderRadius.all(
-              Radius.circular(100),
-            ),
-            side: BorderSide(
-              color: AppColors.kWhiteColor,
-              width: 2,
-            )),
-        backgroundColor: AppColors.kFabColor,
-        child: Icon(
-          Icons.add,
-          color: AppColors.kWhiteColor,
-          size: 30,
-        ),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          ToDoTab(
-            inCompleteToDos: inCompleteToDos,
-          ),
-          CompletedTab(
-            completeToDos: completeToDos,
-          ),
-        ],
       ),
     );
   }

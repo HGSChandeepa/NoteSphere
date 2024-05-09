@@ -20,7 +20,7 @@ class AppRouter {
         name: "home",
         path: '/',
         builder: (context, state) {
-          return const HomePage();
+          return HomePage();
         },
       ),
       GoRoute(
