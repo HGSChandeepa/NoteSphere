@@ -17,6 +17,7 @@ NoteSphere
 4. Run the app: `flutter run`
 
 ## Screenshots
+![NoteSphere](https://github.com/HGSChandeepa/NoteSphere/blob/main/app.png)
 
 ## Contributing
 
